@@ -45,7 +45,6 @@ const portfolioSchema = new mongoose.Schema({
             },
             certificates: {
                 type: Object,
-                required: true,
                 default: {
                     url: '',
                     public_id: null
@@ -97,13 +96,6 @@ const validationAddlicensesAndCertificates = (obj) => {
     const schema = joi.object({
       organization: joi.string().trim().required(),
       course: joi.string().trim().required(),
-      certificates: joi.object({
-        url: joi.string().required().allow(''),
-        public_id: joi.string().allow(null)
-      }).required().default({
-        url: '',
-        public_id: null
-      })
     });
   
     return schema.validate(obj);
