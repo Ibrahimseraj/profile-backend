@@ -294,26 +294,37 @@ module.exports.addLicensesAndCertificatesCtrl = asyncHandler(
 
 module.exports.addLicensesAndCertificatesCtrl = asyncHandler(
     async (req, res) => {
-        const portfolio = await Portfolio.findById(req.params.id);
+        try {
+            const portfolio = await Portfolio.findById(req.params.id);
   
-        if (!portfolio) {
-            return res.status(404).json({ message: "Portfolio not found" });
-        }
+            if (!portfolio) {
+                return res.status(404).json({ message: "Portfolio not found" });
+            }
   
-        if (req.user.userId !== portfolio.user.toString()) {
-            return res.status(403).json({ message: "You are not allowed" });
-        }
-  
-        const newLicensesAndCertificates = {
-            organization: req.body.organization,
-            course: req.body.course,
-        };
+            if (req.user.userId !== portfolio.user.toString()) {
+                return res.status(403).json({ message: "You are not allowed" });
+            }
 
-        portfolio.licensesAndCertificates.push(newLicensesAndCertificates);
-        
-        await portfolio.save();
+            // Validate request body
+            const { organization, course } = req.body;
+            if (!organization || !course) {
+                return res.status(400).json({ message: "Organization and course are required" });
+            }
+
+            const newLicensesAndCertificates = {
+                organization,
+                course,
+            };
+
+            portfolio.licensesAndCertificates.push(newLicensesAndCertificates);
+            
+            await portfolio.save();
   
-        res.status(200).json({ message: "Education added successfully", licensesAndCertificates: newLicensesAndCertificates });
+            res.status(200).json({ message: "Education added successfully", licensesAndCertificates: newLicensesAndCertificates });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
     }
 );
   
