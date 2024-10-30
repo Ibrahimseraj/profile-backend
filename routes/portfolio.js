@@ -43,7 +43,7 @@ router.route("/:id/add/experience").post(validateObjectId, verifyToken, addExper
 
 
 // route : <| /portfolio/:id/add/education |>
-router.route("/:id/add/licenses/certificates").post(validateObjectId, verifyToken, photoUpload.single("certificates"), addLicensesAndCertificatesCtrl);
+router.route("/:id/add/licenses/certificates").post(validateObjectId, verifyToken, addLicensesAndCertificatesCtrl);
 
 
 // route : <| /portfolio/:id/update/education |>

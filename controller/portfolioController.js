@@ -249,6 +249,7 @@ module.exports.addExperienceCtrl = asyncHandler(
  * @method POST
  * @access private (only user himself)
  */
+/*
 module.exports.addLicensesAndCertificatesCtrl = asyncHandler(
     async (req, res) => {
         //const { error } = validationAddlicensesAndCertificates(req.body);
@@ -287,6 +288,32 @@ module.exports.addLicensesAndCertificatesCtrl = asyncHandler(
         res.status(200).json({ message: "Education added successfully", licensesAndCertificates: newLicensesAndCertificates });
 
         fs.unlinkSync(imagePath);
+    }
+);
+*/
+
+module.exports.addLicensesAndCertificatesCtrl = asyncHandler(
+    async (req, res) => {
+        const portfolio = await Portfolio.findById(req.params.id);
+  
+        if (!portfolio) {
+            return res.status(404).json({ message: "Portfolio not found" });
+        }
+  
+        if (req.user.userId !== portfolio.user.toString()) {
+            return res.status(403).json({ message: "You are not allowed" });
+        }
+  
+        const newLicensesAndCertificates = {
+            organization: req.body.organization,
+            course: req.body.course,
+        };
+
+        portfolio.licensesAndCertificates.push(newLicensesAndCertificates);
+        
+        await portfolio.save();
+  
+        res.status(200).json({ message: "Education added successfully", licensesAndCertificates: newLicensesAndCertificates });
     }
 );
   
